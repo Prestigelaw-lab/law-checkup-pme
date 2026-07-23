@@ -147,7 +147,7 @@ function generate(inputPath, outputPath) {
       spacing: { before: 300 },
       children: [
         new TextRun({ text: "Score de risque global : ", bold: true, font: FONT, size: 26 }),
-        badge(${overall.label} (${totalScore} pts), overall.color),
+        badge(`${overall.label} (${totalScore} pts)`, overall.color),
       ],
     }),
     new Paragraph({
@@ -158,7 +158,7 @@ function generate(inputPath, outputPath) {
 
   children.push(h1("Synthèse"));
   children.push(paragraph(
-    Ce rapport présente un diagnostic automatisé des principaux risques juridiques identifiés pour ${clientName}, sur la base des réponses fournies au questionnaire Legal Check-up PME. Il ne remplace pas une consultation juridique mais permet d'orienter en priorité vers les points qui la justifient.
+    `Ce rapport présente un diagnostic automatisé des principaux risques juridiques identifiés pour ${clientName}, sur la base des réponses fournies au questionnaire Legal Check-up PME. Il ne remplace pas une consultation juridique mais permet d'orienter en priorité vers les points qui la justifient.`
   ));
 
   for (const { block, result } of results) {
@@ -183,7 +183,7 @@ function generate(inputPath, outputPath) {
 
   children.push(h1("Prochaine étape"));
   children.push(paragraph(
-    Au vu de ce diagnostic (score global : ${overall.label}), il est recommandé de faire examiner en priorité les points critiques identifiés ci-dessus lors d'une consultation. Ce rapport servira de base de travail pour rendre cette consultation plus rapide et plus ciblée.
+    `Au vu de ce diagnostic (score global : ${overall.label}), il est recommandé de faire examiner en priorité les points critiques identifiés ci-dessus lors d'une consultation. Ce rapport servira de base de travail pour rendre cette consultation plus rapide et plus ciblée.`
   ));
   children.push(new Paragraph({
     spacing: { before: 300 },
@@ -220,7 +220,7 @@ function generate(inputPath, outputPath) {
 
   return Packer.toBuffer(doc).then((buffer) => {
     fs.writeFileSync(outputPath, buffer);
-    console.log(Rapport généré : ${outputPath} — score global ${totalScore} (${overall.label}));
+    console.log(`Rapport généré : ${outputPath} — score global ${totalScore} (${overall.label})`);
   });
 }
 
