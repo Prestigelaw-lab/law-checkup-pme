@@ -22,18 +22,18 @@ if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
 async function convertToPdf(docxPath) {
   const pdfPath = docxPath.replace(/\.docx$/, ".pdf");
-  execSync(`soffice --headless --convert-to pdf --outdir "${OUTPUT_DIR}" "${docxPath}"`, { stdio: "pipe" });
+  execSync(soffice --headless --convert-to pdf --outdir "${OUTPUT_DIR}" "${docxPath}", { stdio: "pipe" });
   return pdfPath;
 }
 
 async function sendReportEmail({ toEmail, clientName, attachmentPath }) {
   await sendMail({
     to: toEmail,
-    subject: `Votre rapport Legal Check-up PME — ${clientName}`,
+    subject: Votre rapport Legal Check-up PME — ${clientName},
     text:
-      `Bonjour,\n\nVeuillez trouver ci-joint le rapport de votre Legal Check-up PME.\n\n` +
+      Bonjour,\n\nVeuillez trouver ci-joint le rapport de votre Legal Check-up PME.\n\n +
       `Pour toute question ou pour approfondir les points signalés, vous pouvez prendre rendez-vous ` +
-      `avec Maître Liliane G. SUSULI AMOUSSOU au Cabinet Prestige Center Consulting.\n\nCordialement.`,
+      avec le Cabinet Prestige Center Consulting.\n\nCordialement.,
     attachments: [{ path: attachmentPath }],
   });
 }
@@ -55,11 +55,11 @@ app.post("/webhook/tally", async (req, res) => {
         return res.status(402).json({ status: "error", message: "Paiement requis (transaction_id manquant)." });
       }
       if (!paymentStore.isPaid(transactionId)) {
-        console.warn(`Soumission Tally avec transaction_id non payé : ${transactionId}`);
+        console.warn(Soumission Tally avec transaction_id non payé : ${transactionId});
         return res.status(402).json({ status: "error", message: "Paiement non confirmé pour cette transaction." });
       }
       if (paymentStore.wasAlreadyUsedForReport(transactionId)) {
-        console.warn(`Transaction déjà utilisée pour un rapport : ${transactionId}`);
+        console.warn(Transaction déjà utilisée pour un rapport : ${transactionId});
         return res.status(409).json({ status: "error", message: "Cette transaction a déjà généré un rapport." });
       }
     }
@@ -73,7 +73,7 @@ app.post("/webhook/tally", async (req, res) => {
     const clientEmail = emailField ? emailField.value : null;
 
     const safeName = input.clientName.replace(/[^a-z0-9]/gi, "_");
-    const docxPath = path.join(OUTPUT_DIR, `rapport_${safeName}_${Date.now()}.docx`);
+    const docxPath = path.join(OUTPUT_DIR, rapport_${safeName}_${Date.now()}.docx);
 
     // Écrit un fichier temporaire answers.json pour réutiliser generate() tel quel
     const tmpAnswersPath = docxPath.replace(".docx", "_answers.json");
@@ -110,5 +110,5 @@ app.post("/webhook/tally", async (req, res) => {
 app.get("/health", (req, res) => res.json({ status: "up" }));
 
 app.listen(PORT, () => {
-  console.log(`Serveur webhook Legal Check-up en écoute sur le port ${PORT}`);
+  console.log(Serveur webhook Legal Check-up en écoute sur le port ${PORT});
 });
