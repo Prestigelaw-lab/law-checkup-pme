@@ -11,12 +11,19 @@
 
 const {
   Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType,
-  ShadingType, LevelFormat, convertInchesToTwip, BorderStyle
+  ShadingType, LevelFormat, convertInchesToTwip, BorderStyle, ExternalHyperlink
 } = require("docx");
 const fs = require("fs");
 const { BLOCKS, blockLevel, globalLevel } = require("./questions");
 
 const FONT = "Calibri";
+
+// ---- Coordonnées de prise de rendez-vous du cabinet ----
+// Pour mettre à jour : remplacez simplement les deux valeurs ci-dessous.
+// CTA_WHATSAPP_LINK : format https://wa.me/ suivi de l'indicatif pays + numéro, SANS le "+", SANS espaces, SANS le 0 initial après l'indicatif.
+//   Exemple Bénin : numéro affiché +229 XX XX XX XX  ->  https://wa.me/229XXXXXXXX
+const CTA_WHATSAPP_LINK = "https://wa.me/2290166010034";
+// (Un lien Calendly pourra être rajouté plus tard ici, dès que le cabinet en aura un.)
 
 function buildBlockResult(block, answers) {
   const strengths = [];
@@ -140,7 +147,7 @@ function generate(inputPath, outputPath) {
       spacing: { before: 300 },
       children: [
         new TextRun({ text: "Score de risque global : ", bold: true, font: FONT, size: 26 }),
-        badge(`${overall.label} (${totalScore} pts)`, overall.color),
+        badge(${overall.label} (${totalScore} pts), overall.color),
       ],
     }),
     new Paragraph({
@@ -151,7 +158,7 @@ function generate(inputPath, outputPath) {
 
   children.push(h1("Synthèse"));
   children.push(paragraph(
-    `Ce rapport présente un diagnostic automatisé des principaux risques juridiques identifiés pour ${clientName}, sur la base des réponses fournies au questionnaire Legal Check-up PME. Il ne remplace pas une consultation juridique mais permet d'orienter en priorité vers les points qui la justifient.`
+    Ce rapport présente un diagnostic automatisé des principaux risques juridiques identifiés pour ${clientName}, sur la base des réponses fournies au questionnaire Legal Check-up PME. Il ne remplace pas une consultation juridique mais permet d'orienter en priorité vers les points qui la justifient.
   ));
 
   for (const { block, result } of results) {
@@ -176,12 +183,25 @@ function generate(inputPath, outputPath) {
 
   children.push(h1("Prochaine étape"));
   children.push(paragraph(
-    `Au vu de ce diagnostic (score global : ${overall.label}), nous recommandons un rendez-vous avec Maître Liliane G. SUSULI AMOUSSOU pour examiner en priorité les points critiques identifiés ci-dessus. Ce rapport servira de base de travail pour rendre cette consultation plus rapide et plus ciblée.`
+    Au vu de ce diagnostic (score global : ${overall.label}), il est recommandé de faire examiner en priorité les points critiques identifiés ci-dessus lors d'une consultation. Ce rapport servira de base de travail pour rendre cette consultation plus rapide et plus ciblée.
   ));
   children.push(new Paragraph({
     spacing: { before: 300 },
     alignment: AlignmentType.CENTER,
-    children: [new TextRun({ text: "📅 Prendre rendez-vous : [lien Calendly / contact WhatsApp du cabinet]", bold: true, font: FONT, size: 22, color: "1F3864" })],
+    children: [
+      new TextRun({ text: "📅 Prendre rendez-vous immédiatement", bold: true, font: FONT, size: 22, color: "1F3864" }),
+    ],
+  }));
+  children.push(new Paragraph({
+    spacing: { before: 150 },
+    alignment: AlignmentType.CENTER,
+    children: [
+      new TextRun({ text: "💬 WhatsApp : ", bold: true, font: FONT, size: 21 }),
+      new ExternalHyperlink({
+        link: CTA_WHATSAPP_LINK,
+        children: [new TextRun({ text: CTA_WHATSAPP_LINK, font: FONT, size: 21, color: "1155CC", underline: {} })],
+      }),
+    ],
   }));
 
   const doc = new Document({
@@ -200,7 +220,7 @@ function generate(inputPath, outputPath) {
 
   return Packer.toBuffer(doc).then((buffer) => {
     fs.writeFileSync(outputPath, buffer);
-    console.log(`Rapport généré : ${outputPath} — score global ${totalScore} (${overall.label})`);
+    console.log(Rapport généré : ${outputPath} — score global ${totalScore} (${overall.label}));
   });
 }
 
