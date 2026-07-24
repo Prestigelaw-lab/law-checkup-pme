@@ -1,9 +1,15 @@
 const nodemailer = require("nodemailer");
+const dns = require("dns");
+
+// Force IPv4 : évite l'erreur ENETUNREACH rencontrée sur certains hébergeurs
+// (ex. Render) quand la résolution DNS renvoie une adresse IPv6 injoignable.
+dns.setDefaultResultOrder("ipv4first");
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: Number(process.env.SMTP_PORT || 587),
   secure: process.env.SMTP_SECURE === "true",
+  family: 4,
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
